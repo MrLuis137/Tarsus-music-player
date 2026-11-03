@@ -12,3 +12,8 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
+pub mod decoder;
+pub use decoder::{AudioDecoder, DecodeError};
+pub mod output;
+pub use output::{AudioOutput,OutputError};
