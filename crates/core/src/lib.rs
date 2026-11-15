@@ -17,3 +17,5 @@ pub mod decoder;
 pub use decoder::{AudioDecoder, DecodeError};
 pub mod output;
 pub use output::{AudioOutput,OutputError};
+pub mod converter;
+pub use converter::Converter;
