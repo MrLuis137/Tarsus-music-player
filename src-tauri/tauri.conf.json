@@ -33,6 +33,11 @@
     ],
     "resources": {
       "../crates/core/tests/fixtures/test.flac": "test.flac"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
     }
   }
 }

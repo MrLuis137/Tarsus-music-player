@@ -7,7 +7,7 @@ use tauri::{path::BaseDirectory, AppHandle, Manager, State};
 fn play_test_file(app: AppHandle, audio: State<AudioHandle>) -> Result<(), String> {
     let path = app
         .path()
-        .resolve("error.flac", BaseDirectory::Resource)
+        .resolve("test.flac", BaseDirectory::Resource)
         .map_err(|e| e.to_string())?;
     audio.play(path)
 }

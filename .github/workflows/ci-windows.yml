@@ -1,0 +1,57 @@
+name: CI Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Tests del núcleo
+        run: cargo test -p player-core
+
+      - name: Dependencias de JS
+        run: npm ci
+
+      - name: Build (instalador NSIS)
+        run: npm run tauri build -- --bundles nsis
+
+      - name: Empaquetar versión portable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path portable | Out-Null
+          Copy-Item target/release/scaffold.exe portable/
+          Copy-Item crates/core/tests/fixtures/test.flac portable/
+          Compress-Archive -Path portable/* -DestinationPath scaffold-portable.zip
+
+      - name: Subir instalador
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: target/release/bundle/nsis/*-setup.exe
+          if-no-files-found: error
+
+      - name: Subir versión portable
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-portable
+          path: scaffold-portable.zip
+          if-no-files-found: error
